@@ -1,0 +1,107 @@
+\documentclass[11pt]{article}
+
+%
+\usepackage{fullpage}
+\setlength{\parindent}{0cm}
+\usepackage[margin=20pt]{geometry}
+
+\usepackage{amsmath, amsfonts}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage[svgnames]{xcolor}
+\usepackage{datetime2}
+\usepackage{epstopdf}
+\usepackage[hidelinks]{hyperref}
+
+
+% https://tex.stackexchange.com/questions/59517/label-rows-of-a-matrix-by-characters
+\usepackage{nicematrix}
+
+
+\usepackage{cancel}
+
+\usepackage{listings}
+\lstset{language=Python}
+
+
+
+
+% https://latex.org/forum/viewtopic.php?t=10456
+\usepackage{titlesec}
+\titleformat{\subsubsection}[runin] % puts it in the same paragraph
+{\normalfont\bfseries}% formatting commands to apply to the whole heading
+{\thesubsubsection}% the label and number
+{}% space between label/number and subsection title
+{}% formatting commands applied just to subsection title
+[]% punctuation or other commands following subsection title
+
+
+% Macros
+%\newcommand{\IP}{\mathbb{P}}
+\newcommand{\IE}{\mathbb{E}}
+\newcommand{\IN}{\mathbb{N}}
+\newcommand{\IR}{\mathbb{R}}
+\newcommand{\IC}{\mathbb{C}}
+\newcommand{\IZ}{\mathbb{Z}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\norm}[2]{\|#1\|_{#2}}
+\newcommand{\scalar}[2]{\langle#1\rangle_{#2}}
+\newcommand{\from}{\colon}
+\newcommand{\given}{\,|\,}
+\newcommand{\slot}{{\cdot}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\E}{\mathbb{E}}
+\renewcommand{\d}{\mathrm{d}}
+\newcommand{\TEXT}[1]{\quad\text{#1}\quad}
+\renewcommand{\P}{\mathbb{P}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\let\oldrho\rho
+\renewcommand{\rho}{{\color{DarkBlue}\oldrho}}
+\def\[#1\]{\begin{align}\textstyle#1\end{align}}
+
+% https://tex.stackexchange.com/questions/114113/how-to-label-text-with-equation-number
+\newcommand{\eqnum}{\leavevmode\hfill\refstepcounter{equation}\textup{{(\theequation)}}}
+
+
+
+\begin{document}
+\href{https://github.com/numpde/pai_summary}{HS-2020 PAI summary}
+{\tiny\color{lightgray}\hfill{\DTMnow}}
+
+\subsubsection*{MDP} 
+
+$
+	Q^V := 
+	r + \gamma \sum_{x'} p(x' \given \slot) V(x')
+$
+\quad
+$
+	\pi^Q := \arg\max_a Q(\slot, a)
+$
+\quad
+$
+	V^\pi \stackrel{!}{=} Q^{V^\pi}(\slot, \pi(\slot))
+$
+\quad
+\hfill
+Bellman:
+$
+	V^\star
+	=
+	\max_a
+	Q^{V^\star}(\slot, a)
+$
+
+\leavevmode\vfill
+\end{document}
+
+
+
+
+
+
+
