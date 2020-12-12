@@ -14,6 +14,9 @@
 \usepackage[hidelinks]{hyperref}
 
 
+% https://tex.stackexchange.com/questions/13843/vertical-spacing-with-underbrace-command
+\usepackage{mathtools}
+
 % https://tex.stackexchange.com/questions/59517/label-rows-of-a-matrix-by-characters
 \usepackage{nicematrix}
 
@@ -95,6 +98,64 @@ $
 	\max_a
 	Q^{V^\star}(\slot, a)
 $
+
+\subsubsection*{DQN}
+
+$
+	\min_\theta
+	\sum_{xarx'}
+	[
+		(r + \gamma \max_{a'} Q(x', a'; \theta^\text{old}))
+		-
+		Q(x, a; \theta)
+	]^2
+$
+
+
+\subsubsection*{Policy grad}
+
+%
+$
+\nabla_\theta \IE[\Sigma_{t \geq 0} r_t] = 
+\IE[\Sigma_{t \geq 0} \Psi_t \nabla_\theta \log \pi_\theta(a_t \given s_t)]
+$
+\hfill
+$
+	\color{gray}
+	\Psi_t \in 
+	\{
+		{\color{black}
+			\Sigma(r_{0:})
+		},
+		\hfill
+		{\color{black}
+			\Sigma(r_{t:} - b(x_{t:}))
+		},
+		\hfill
+		{\color{black}
+			Q_t
+		},
+		\hfill
+		{\color{black}
+			\smash{\stackrel{{
+				\color{gray}
+				\text{advantage}
+			}}{Q_t - V_t}}
+		},
+		\hfill
+		{\color{black}
+			\smash{\stackrel{{
+				\color{gray}
+				\text{TD residual}
+			}}{r_t + \gamma V_{t + 1} - V_t}}
+		}
+	\}
+$
+
+TODO: gammas?
+%
+% Source: https://arxiv.org/pdf/1506.02438.pdf
+% Added \gamma 
 
 \leavevmode\vfill
 \end{document}
