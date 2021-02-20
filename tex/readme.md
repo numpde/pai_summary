@@ -1,1 +1,1 @@
-[![summary](./summary.jpg)](./summary.pdf)
+![summary](./summary.jpg)
