@@ -5,7 +5,7 @@
 \setlength{\parindent}{0cm}
 \usepackage[margin=20pt]{geometry}
 
-\usepackage{amsmath, amsfonts}
+\usepackage{amsmath, amsfonts, amssymb}
 \usepackage{url}
 \usepackage{graphicx}
 \usepackage[svgnames]{xcolor}
@@ -13,6 +13,10 @@
 \usepackage{epstopdf}
 \usepackage[hidelinks]{hyperref}
 
+\usepackage{titlesec}
+\titlespacing*{\subsubsection}{0pt}{2\baselineskip}{1ex}
+
+%\usepackage{}
 
 % https://tex.stackexchange.com/questions/13843/vertical-spacing-with-underbrace-command
 \usepackage{mathtools}
@@ -26,8 +30,15 @@
 \usepackage{listings}
 \lstset{language=Python}
 
+%https://tex.stackexchange.com/questions/30619/what-is-the-best-symbol-for-vector-matrix-transpose
+\makeatletter
+\newcommand*{\T}{{\mathpalette\@T{}}}
+\newcommand*{\@T}[2]{\raisebox{\depth}{$\m@th#1\intercal$}}
+\makeatother
 
-
+% https://tex.stackexchange.com/questions/151984/double-vertical-bar-notation
+\usepackage{mathtools}
+\DeclarePairedDelimiterX{\KL}[2]{(}{)}{#1\,\delimsize\|\,#2}
 
 % https://latex.org/forum/viewtopic.php?t=10456
 \usepackage{titlesec}
@@ -39,8 +50,9 @@
 []% punctuation or other commands following subsection title
 
 
-% Macros
-%\newcommand{\IP}{\mathbb{P}}
+\newcommand{\cN}{\scalebox{0.9}{\color{DarkBlue}\ensuremath{\mathcal{N}}}}
+\newcommand{\cD}{{\color{DarkBlue}\mathcal{D}}}
+\newcommand{\IP}{\mathbb{P}}
 \newcommand{\IE}{\mathbb{E}}
 \newcommand{\IN}{\mathbb{N}}
 \newcommand{\IR}{\mathbb{R}}
@@ -54,72 +66,563 @@
 \newcommand{\norm}[2]{\|#1\|_{#2}}
 \newcommand{\scalar}[2]{\langle#1\rangle_{#2}}
 \newcommand{\from}{\colon}
-\newcommand{\given}{\,|\,}
-\newcommand{\slot}{{\cdot}}
-\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\given}{\hspace{0.5pt}|\hspace{0.5pt}}
+\newcommand{\slot}{{\hspace{0.5pt}\cdot\hspace{0.5pt}}}
+\newcommand{\Var}{\mathbb{V}}
 \newcommand{\E}{\mathbb{E}}
 \renewcommand{\d}{\mathrm{d}}
 \newcommand{\TEXT}[1]{\quad\text{#1}\quad}
 \renewcommand{\P}{\mathbb{P}}
-\renewcommand{\vec}[1]{\mathbf{#1}}
+\renewcommand{\vec}[1]{\pmb{#1}}
+\newcommand{\tr}{\mathop{\mathrm{tr}}}
+%\newcommand{\KL}{\mathop{\mathrm{KL}}}
 \let\oldrho\rho
 \renewcommand{\rho}{{\color{DarkBlue}\oldrho}}
 \def\[#1\]{\begin{align}\textstyle#1\end{align}}
 
+\renewcommand{\top}{{\color{red}\T}}
+
 % https://tex.stackexchange.com/questions/114113/how-to-label-text-with-equation-number
 \newcommand{\eqnum}{\leavevmode\hfill\refstepcounter{equation}\textup{{(\theequation)}}}
 
+\newcommand{\fact}[2]{%
+	\smash{
+		\color{gray}
+		\underbracket[0.1ex][1pt]{
+			\color{black}
+			\textstyle
+			\ensuremath{#1}%
+		}_{%
+			\text{#2}%
+		}
+	}
+}
 
 
 \begin{document}
 \href{https://github.com/numpde/pai_summary}{HS-2020 PAI summary}
-{\tiny\color{lightgray}\hfill{\DTMnow}}
+{\tiny\color{lightgray}\hfill{RA, \DTMnow}}
 
-{\color{red}\Large moved to: \href{https://www.overleaf.com/project/5ffaf4e7a589b27f928410f8}{overleaf}}
+
+\subsubsection*{RV}
+
+$
+    \vec{A} \cN_{\vec{\mu}, \, \vec\Sigma}
+    =
+    \cN_{\vec{A} \vec{\mu}, \, \vec{A} \vec\Sigma \vec{A}^\T}
+$
+\hfill
+$|2\pi\vec\Sigma|^{-\frac12} e^{-\frac12 \norm{\vec{x} - \vec{\mu}}{\vec\Sigma^{-1}}^2}$
+\hfill
+$
+    (\vec{w} \given \vec{v})
+    \sim
+    \cN_{
+        \bar{\vec{w}} + 
+        \vec\Sigma_{\times}
+        \vec\Sigma_{\vec{v}}^{-1} (\vec{v} - \bar{\vec{v}})
+        , \,
+        \vec\Sigma_{\vec{w}} - 
+        \vec\Sigma_{\times}
+        \vec\Sigma_{\vec{v}}^{-1}
+        \vec\Sigma_{\times}^\T
+    }
+$
+%
+\hfill
+%
+{\ }
+
+
+
+\subsubsection*{Proba}
+
+$
+	\fact{
+		P_{X, Y} = P_{X \given Y} P_Y
+	}{
+		chain/product rule
+	}
+$
+%
+\hfill
+%
+$
+	\fact{
+		P_{X = x}
+		=
+		\sum_y P_{X = x, Y = y}
+	}{
+		marginalization / sum rule
+	}
+$
+%
+\hfill
+%
+$
+	\fact{
+		\int p(y \given f, X) p(f \given \theta) df
+	}{
+		$p(y \given X, \theta)$ model selection
+	}
+$
+%
+\hfill
+%
+$
+	\fact{
+		\IP(| \IE[f] - \frac1N \sum_{i = 1}^N f(x_i)| > \varepsilon)
+		\leq
+		2 e^{-\frac{2 N \varepsilon^2}{\max f^2}}
+	}{
+		Hoeffding for a random sample $\{ x_i \}_i$
+	}
+$
+%
+\hfill
+%
+{\ }
+
+
+
+\subsubsection*{BL}
+
+$
+	\fact{
+		p(\vec{y} \given \vec{X}, \theta)
+		=
+		\prod_i p(y_i \given x_i, \theta)
+	}{
+		likelihood
+	}
+$
+%
+\hfill
+%
+$
+	\fact{
+		p(\theta)
+	}{
+		prior
+	}
+$
+%
+\hfill
+%
+$
+	\fact{
+		p(\theta \given \vec{X}, \vec{y})
+		\propto
+		\text{likelihood} \times \text{prior}
+	}{
+		posterior
+	}
+$
+%
+\hfill
+%
+$
+	\fact{
+		p(y^* \given x^*, \vec{X}, \vec{y})
+		=
+		\int p(y^* \given x^*, \theta) \times [\text{posterior}] \, d\theta
+	}{
+		predictions
+	}
+$
+
+
+
+\subsubsection*{Fact}
+
+% Sec 6.3.1 in [R&W, 2006]
+$
+    \partial_\theta (\Sigma^{-1})
+    =
+    -\Sigma^{-1} (\partial_\theta \Sigma) \Sigma^{-1}
+$
+%
+\hfill
+%
+$
+    \partial_\theta \ln |\Sigma| =
+    (\Sigma^{-\T} \mathbin{:} \partial_\theta \Sigma) =
+    \tr(\Sigma^{-1} \partial_\theta \Sigma)
+$
+%
+%
+\hfill
+%
+$
+	\fact{
+		I(X, Y) = H[X] - H[X \given Y]
+	}{
+		gain
+		$\frac12 |I + \frac{1}{\sigma_\varepsilon^2} \Var[X]|$
+		for
+		$Y = X + \varepsilon$
+	}
+$
+
+
+
+\subsubsection*{H}
+
+$
+    H[p, q] = -\IE_p[\ln q]
+$
+\hfill
+$
+    \KL{p}{q} = \IE_p [ \ln \frac{p}{q} ]
+$
+\hfill
+$
+    H[\cN] = \frac12 \ln ((2 \pi e)^d |\Sigma|)
+$
+%\text{nats}
+\hfill
+$
+    \KL{\cN_0}{\cN_1} =
+    \tfrac12 (
+        \tr(\frac{\vec\Sigma_0}{\vec\Sigma_1} - \vec{I}) +
+        |\Delta\vec\mu|_{\vec\Sigma_1^{-1}}^2
+        -
+        \ln \frac{|\vec\Sigma_0|}{|\vec\Sigma_1|}
+    )
+$
+% https://en.wikipedia.org/wiki/Multivariate_normal_distribution
+
+
+\subsubsection*{BLR}
+
+$
+    y = X^\T w + \varepsilon
+$
+\hfill
+$
+    \IE[w \given y] =
+    \bar{w} + K (y - \bar{y})
+$
+\hfill
+$
+    \Var[w \given y]
+    =
+    \vec\Sigma_w
+    -
+    \fact{
+        \vec\Sigma_w {X}
+        (\vec\Sigma_{\varepsilon} + {X}^\T \vec\Sigma_w {X})^{-1}
+    }{
+    	Kalman gain $K$, $\mathcal{O}(|y|^2)$
+   	}
+    %
+    {X}^\T
+    \vec\Sigma_w
+    %
+    \stackrel{\scalebox{.4}{\href{https://en.wikipedia.org/wiki/Woodbury_matrix_identity}{\text{SMW}}}}{=}
+    %
+    \fact{
+		(\vec\Sigma_w^{-1} + {X} \vec\Sigma_{\varepsilon}^{-1} {X}^\T)^{-1}
+    }{
+	   	can be $\mathcal{O}(|w|^2 \times |y|)$
+    }
+$
+
+%$K = \Sigma_w X \Sigma_y^{-1}$
+
+
+
+\subsubsection*{GP}
+
+$
+	\fact{
+		w
+		\stackrel{\text{prior}}{\sim}
+		\cN(\bar{w}, \Sigma_w \equiv k(\slot, \slot))
+	}{
+		$X := (\delta_x)_{x \in A}$
+	}
+$
+%
+\hfill
+%
+$
+    \fact{\log p(x)}{evidence}
+    =
+    \fact{\KL{ q }{ p(\cdot \given x) }}{$\geq 0$}
+    +
+    \fact{H[q] - H[q, p(\cdot, x)]}{ELBO}
+$
+%
+\hfill
+%
+$
+	\fact{
+		\textstyle
+		\int (t - y)_+ p(y \given x) dx
+	}{
+		$\text{EI}(x)$ over target $t$
+	}
+$
+%
+\hfill
+%
+$
+	\fact{
+	    (F w \given y) + B u' + \eta'
+ 	}{
+ 		$w_\text{new}$ in Kalman filter
+	}
+$
+
+
+\subsubsection*{MC}
+
+$
+    \smash{
+        \color{gray}
+        \underbracket[0.1ex][1pt]{
+            \color{black}
+            \exists t: P^t > 0
+        }_{
+            \text{ergodic}
+        }
+    }
+$
+$\Rightarrow$
+$
+	\smash{
+		\color{gray}
+		\underbracket[0.1ex][1pt]{
+			\color{black}
+			\exists! \pi > 0
+		}_{
+			+ X_\infty \sim \pi
+		} 
+	}
+$
+%
+%
+\hfill
+%
+%
+$
+    \smash{
+        \color{gray}
+        \underbracket[0.1ex][1pt]{
+			\color{black}
+			P_{x' \leftarrow x} f_x = P_{x \leftarrow x'} f_{x'}
+        }_{
+            \text{det bal for $f$}
+            \ \Rightarrow \ 
+            \text{$P * f = f$}
+        } 
+    }
+$
+%
+%
+\hfill
+%
+%
+%$
+%    \smash{
+%        \color{gray}
+%        \underbracket[0.1ex][1pt]{
+%			\color{black}
+%			p(y_{1:n} \given \theta) p(\theta)
+%        }_{
+%        	=: f
+%        	{\ }
+%        	\propto
+%        	{\ }
+%        	p(\theta \given y_{1:n})
+%        } 
+%    }
+%$
+%%
+%%
+%\hfill
+%
+%
+$
+    \smash{
+        \color{gray}
+        \underbracket[0.1ex][1pt]{
+            \color{black}
+            u \leq
+			\tfrac{R_{x \leftarrow x'} f_{x'}}{R_{x' \leftarrow x} f_{x}}
+		}_{
+			\text{MH $x' \leftarrow x$}
+		}
+	}
+$
+%
+%
+\hfill
+%
+%
+%
+$
+    \smash{
+        \color{gray}
+        \underbracket[0.1ex][1pt]{
+            \color{black}
+           	R_{{\,\cdot\,} \leftarrow x}^{{}_\text{MALA}} = \cN_{x - \tau g_x', \,  2 \tau I}
+		}_{
+			\text{$g = -\log f$:  $\cup \Rightarrow \text{convg}$}
+		}
+	}
+$
+%
+%
+\hfill
+%
+%
+$
+    \smash{
+        \color{gray}
+        \underbracket[0.1ex][1pt]{
+            \color{black}
+			e^{
+				-
+				%\frac{1}{\varepsilon}
+				(
+					\lambda |\theta|^2
+					+
+					\frac{n}{m} \sum_{i}^m
+					\ln(1 + e^{-y_i \theta \cdot x_i})
+				)
+			}
+		}_{
+			\text{log-reg $e^{-\color{black}g}$}
+			{\ \ }
+			\text{SGLD: $\cancel{u}$, $\tau \sim t^{-\frac13}$}
+		}
+	}
+$
+
+
+
+
+
 
 \subsubsection*{MDP} 
 
 $
-	Q^V := 
-	r + \gamma \sum_{x'} p(x' \given \slot) V(x')
+	Q_{x, a}^V := 
+	r_{x, a} + \gamma \sum_{x'} V_{x'} P_{x' \given x, a}
 $
-\quad
-$
-	\pi^Q := \arg\max_a Q(\slot, a)
-$
-\quad
-$
-	V^\pi \stackrel{!}{=} Q^{V^\pi}(\slot, \pi(\slot))
-$
-\quad
 \hfill
-Bellman:
 $
-	V^\star
-	=
-	\max_a
-	Q^{V^\star}(\slot, a)
+	\pi_x^Q := \arg Q_{x, \uparrow}
+$
+\hfill
+$
+	\fact{
+		V_x^\pi \stackrel{!}{=} Q_{x, \pi(x)}^{V^\pi}
+	}{
+		solve for $V^\pi$
+	}
+$
+\hfill
+$
+    \fact{
+		V_x^\star = Q_{x, {\,\uparrow\,}}^{V^\star}
+	}{
+		Bellman
+	}
+$
+\hfill
+$
+	\fact{
+		V^\pi \leftrightarrow \pi := \pi^{(Q^V)}
+	}{
+		policy it.~convg
+	}
+$
+\hfill
+$
+    \fact{
+		V_x \leftarrow Q_{x, {\,\uparrow\,}}^V
+	}{
+		value it.~$\varepsilon$-convg
+	}
 $
 
-\subsubsection*{DQN}
+\subsubsection*{QL}
 
 $
-	\min_\theta
-	\sum_{xarx'}
-	[
-		(r + \gamma \max_{a'} Q(x', a'; \theta^\text{old}))
-		-
-		Q(x, a; \theta)
-	]^2
+    \fact{
+        Q_{s_t, a_t}
+        \leftarrow
+        (1 - \alpha_t) \,
+        Q_{s_t, a_t} +
+        \alpha_t \,
+        (r_t + \gamma Q_{s_{t + 1}, {\,\uparrow\,}})
+	}{
+		(RM for $\alpha$)
+		$\wedge$
+		(all $(s, a)$ recurrent)
+		$\Rightarrow$
+		convg
+	}
+$
+%
+\hfill
+%
+$
+	\fact{
+		\min_\theta
+		\sum_{xarx'}
+		[
+			r + \gamma Q_{x', {\,\uparrow\,}}^{\theta^\text{old}}
+			-
+			Q_{x, a}^{\theta}
+		]^2
+	}{
+		DQN
+	}
+$
+%
+\hfill
+%
+$
+	\fact{
+		\Sigma_t \varepsilon_t^2 < \infty \leq \Sigma_t \varepsilon_t
+	}{
+		RM, $\epsilon$-greedy $\Rightarrow$ convg
+	}
+$
+%
+\hfill
+%
+$
+	\fact{
+		r_{x, a} := R^{\max}
+	}{
+		$P{?}$ $x^*{!}$,
+		whp $\varepsilon$-cvg
+	}
 $
 
 
-\subsubsection*{Policy grad}
+
+\subsubsection*{Policy$\nabla$}
 
 %
 $
-\nabla_\theta \IE[\Sigma_{t \geq 0} r_t] = 
-\IE[\Sigma_{t \geq 0} \Psi_t \nabla_\theta \log \pi_\theta(a_t \given s_t)]
+	\fact{
+		\nabla_\theta \IE[\Sigma_{t \geq 1} \gamma^t r_t] = 
+		\IE[\Sigma_{t \geq 1} \Psi_t \nabla_\theta \ln \pi_\theta(a_t \given s_t)]
+	}{
+		REINFORCE: 
+		for $t \geq 1$
+		do
+		$
+			\delta\theta =
+			\eta \Psi_t \nabla_\theta \ln \pi_\theta
+		$		
+	}
 $
 \hfill
 $
@@ -127,37 +630,40 @@ $
 	\Psi_t \in 
 	\{
 		{\color{black}
-			\Sigma(r_{0:})
+			\Sigma(\gamma^{1:} r_{1:})
 		},
 		\hfill
-		{\color{black}
-			\Sigma(r_{t:} - b(x_{t:}))
+		\fact{
+			\Sigma(\gamma^{t:} (r_{t:} - b(x_{t:})))
+		}{
+			rew.~to go
+			$\Sigma(\gamma^{0:} r_{t:})$
 		},
 		\hfill
 		{\color{black}
 			Q_t
 		},
 		\hfill
-		{\color{black}
-			\smash{\stackrel{{
-				\color{gray}
-				\text{advantage}
-			}}{Q_t - V_t}}
+		\fact{
+			Q_t - V_t
+		}{
+			adv.
 		},
 		\hfill
-		{\color{black}
-			\smash{\stackrel{{
-				\color{gray}
-				\text{TD residual}
-			}}{r_t + \gamma V_{t + 1} - V_t}}
+		\fact{
+			r_t + \gamma V_{t + 1} - V_t
+		}{
+			TD:
+			$\delta V = \alpha \times \text{TD}$
 		}
 	\}
 $
-
-TODO: gammas?
 %
 % Source: https://arxiv.org/pdf/1506.02438.pdf
 % Added \gamma 
+
+%\subsubsection*{--}
+
 
 \leavevmode\vfill
 \end{document}
